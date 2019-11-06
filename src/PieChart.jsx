@@ -1,39 +1,92 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
-import d3 from 'd3';
+'use strict';
 
-import Chart from './Chart';
-import Tooltip from './Tooltip';
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-import DefaultPropsMixin from './DefaultPropsMixin';
-import HeightWidthMixin from './HeightWidthMixin';
-import AccessorMixin from './AccessorMixin';
-import TooltipMixin from './TooltipMixin';
+var _react = require('react');
 
-const { string, array, number, bool, func, any } = PropTypes;
+var _react2 = _interopRequireDefault(_react);
 
-const Wedge = createReactClass({
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+var _createReactClass = require('create-react-class');
+
+var _createReactClass2 = _interopRequireDefault(_createReactClass);
+
+var _d = require('d3');
+
+var _d2 = _interopRequireDefault(_d);
+
+var _Chart = require('./Chart');
+
+var _Chart2 = _interopRequireDefault(_Chart);
+
+var _Tooltip = require('./Tooltip');
+
+var _Tooltip2 = _interopRequireDefault(_Tooltip);
+
+var _DefaultPropsMixin = require('./DefaultPropsMixin');
+
+var _DefaultPropsMixin2 = _interopRequireDefault(_DefaultPropsMixin);
+
+var _HeightWidthMixin = require('./HeightWidthMixin');
+
+var _HeightWidthMixin2 = _interopRequireDefault(_HeightWidthMixin);
+
+var _AccessorMixin = require('./AccessorMixin');
+
+var _AccessorMixin2 = _interopRequireDefault(_AccessorMixin);
+
+var _TooltipMixin = require('./TooltipMixin');
+
+var _TooltipMixin2 = _interopRequireDefault(_TooltipMixin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var string = _propTypes2.default.string,
+    array = _propTypes2.default.array,
+    number = _propTypes2.default.number,
+    bool = _propTypes2.default.bool,
+    func = _propTypes2.default.func,
+    any = _propTypes2.default.any;
+
+
+var Wedge = (0, _createReactClass2.default)({
+    displayName: 'Wedge',
+ 
     propTypes: {
         d: string.isRequired,
         fill: string.isRequired
     },
 
-    render() {
-        const { fill, d, data, onMouseEnter, onMouseLeave } = this.props;
+    render: function render() {
+        var _props = this.props,
+            fill = _props.fill,
+            d = _props.d,
+            data = _props.data,
+            onMouseEnter = _props.onMouseEnter,
+            _onMouseLeave = _props.onMouseLeave;
+             
 
-        return (
-            <path
-                fill={fill}
-                d={d}
-                onMouseMove={evt => onMouseEnter(evt, data)}
-                onMouseLeave={evt => onMouseLeave(evt)}
-            />
-        );
+        return _react2.default.createElement('path', {
+            fill: fill,
+            d: d,
+            onMouseMove: function onMouseMove(evt) {
+                return onMouseEnter(evt, data);
+            },
+            onMouseLeave: function onMouseLeave(evt) {
+                return _onMouseLeave(evt);
+            }
+        });
     }
 });
 
-const DataSet = createReactClass({
+var DataSet = (0, _createReactClass2.default)({
+    displayName: 'DataSet',
+
     propTypes: {
         pie: array.isRequired,
         arc: func.isRequired,
@@ -48,7 +101,7 @@ const DataSet = createReactClass({
         hideLabels: bool
     },
 
-    getDefaultProps() {
+    getDefaultProps: function getDefaultProps() {
         return {
             strokeWidth: 2,
             stroke: '#000',
@@ -57,94 +110,121 @@ const DataSet = createReactClass({
             hideLabels: false
         };
     },
+    renderLabel: function renderLabel(wedge) {
+        var _props2 = this.props,
+            arc = _props2.arc,
+            outerArc = _props2.outerArc,
+            radius = _props2.radius,
+            strokeWidth = _props2.strokeWidth,
+            stroke = _props2.stroke,
+            fill = _props2.fill,
+            opacity = _props2.opacity,
+            x = _props2.x,
+            y=_props2.y;
 
-    renderLabel(wedge) {
-        const {
-            arc,
-            outerArc,
-            radius,
-            strokeWidth,
-            stroke,
-            fill,
-            opacity,
-            x
-        } = this.props;
 
-        const labelPos = outerArc.centroid(wedge);
+        var labelPos = outerArc.centroid(wedge);
         labelPos[0] = radius * (this.midAngle(wedge) < Math.PI ? 1 : -1);
 
-        const linePos = outerArc.centroid(wedge);
+        var linePos = outerArc.centroid(wedge);
         linePos[0] = radius * 0.95 * (this.midAngle(wedge) < Math.PI ? 1 : -1);
-
-        const textAnchor = this.midAngle(wedge) < Math.PI ? 'start' : 'end';
-
-        return (
-            <g>
-                <polyline
-                    opacity={opacity}
-                    strokeWidth={strokeWidth}
-                    stroke={stroke}
-                    fill={fill}
-                    points={[
-                        arc.centroid(wedge),
-                        outerArc.centroid(wedge),
-                        linePos
-                    ]}
-                />
-                <text
-                    dy=".35em"
-                    x={labelPos[0]}
-                    y={labelPos[1]}
-                    textAnchor={textAnchor}
-                >
-                    {x(wedge.data)}
-                </text>
-            </g>
+       
+        var textAnchor = this.midAngle(wedge) < Math.PI ? 'start' : 'end';
+        console.log(wedge);
+        return _react2.default.createElement(
+            'g',
+            null,
+            _react2.default.createElement('polyline', {
+                opacity: opacity,
+                strokeWidth: strokeWidth,
+                stroke: stroke,
+                fill: fill,
+                points: [arc.centroid(wedge), outerArc.centroid(wedge), linePos]
+            }),
+            _react2.default.createElement(
+            'circle',
+            {
+            
+                cx: labelPos[0],
+                cy: labelPos[1],                
+                r:3,
+                strokeWidth:2, 
+                fill : wedge.data.color,   
+                className: "circle" },
+   
+            ) ,            
+            _react2.default.createElement(
+                'text',
+                {
+                    dy: '.2em',
+                    x: labelPos[0],
+                    y: labelPos[1]+15,
+                    textAnchor: textAnchor,
+                    className: "total" },
+                    y(wedge.data) 
+            ),
+            _react2.default.createElement(
+                'text',
+                {
+                    dy: '.2em',
+                    x: labelPos[0],
+                    y: labelPos[1]+30,
+                    textAnchor: textAnchor,
+                    className: "title" },
+                    x(wedge.data) 
+                  
+            )
+           
         );
     },
+    render: function render() {
+        var _this = this;
 
-    render() {
-        const {
-            pie,
-            arc,
-            colorScale,
-            x,
-            y,
-            onMouseEnter,
-            onMouseLeave,
-            hideLabels
-        } = this.props;
+        var _props3 = this.props,
+            pie = _props3.pie,
+            arc = _props3.arc,
+            colorScale = _props3.colorScale,
+            x = _props3.x,
+            y = _props3.y,
+            onMouseEnter = _props3.onMouseEnter,
+            onMouseLeave = _props3.onMouseLeave,
+            hideLabels = _props3.hideLabels;
 
-        const wedges = pie.map((e, index) => {
-            const labelFits = e.endAngle - e.startAngle >= 10 * Math.PI / 180;
 
-            return (
-                <g key={`${x(e.data)}.${y(e.data)}.${index}`} className="arc">
-                    <Wedge
-                        data={e.data}
-                        fill={colorScale(x(e.data))}
-                        d={arc(e)}
-                        onMouseEnter={onMouseEnter}
-                        onMouseLeave={onMouseLeave}
-                    />
-                    {!hideLabels &&
-                        !!e.value &&
-                        labelFits &&
-                        this.renderLabel(e)}
-                </g>
+        var wedges = pie.map(function (e, index) {
+            var labelFits = e.endAngle - e.startAngle >= 10 * Math.PI / 180;
+      
+            return _react2.default.createElement(
+                'g',
+                { key: x(e.data) + '.' + y(e.data) + '.' + index, className: 'arc' },
+                _react2.default.createElement(Wedge, {
+                    data: e.data,
+                    fill: colorScale(x(e.data)),
+                    d: arc(e),
+                    onMouseEnter: onMouseEnter,
+                    onMouseLeave: onMouseLeave
+                }),
+                !hideLabels && !!e.value && labelFits && _this.renderLabel(e)
+               
             );
+      
         });
 
-        return <g>{wedges}</g>;
+        return _react2.default.createElement(
+            'g',
+            null,
+            wedges
+        );
     },
-
-    midAngle(d) {
+    midAngle: function midAngle(d) {
         return d.startAngle + (d.endAngle - d.startAngle) / 2;
     }
 });
 
-const PieChart = createReactClass({
-    mixins: [DefaultPropsMixin, HeightWidthMixin, AccessorMixin, TooltipMixin],
+var PieChart = (0, _createReactClass2.default)({
+    displayName: 'PieChart',
+
+    mixins: [_DefaultPropsMixin2.default, _HeightWidthMixin2.default, _AccessorMixin2.default, _TooltipMixin2.default],
 
     propTypes: {
         innerRadius: number,
@@ -156,7 +236,7 @@ const PieChart = createReactClass({
         hideLabels: bool
     },
 
-    getDefaultProps() {
+    getDefaultProps: function getDefaultProps() {
         return {
             innerRadius: null,
             outerRadius: null,
@@ -167,43 +247,45 @@ const PieChart = createReactClass({
             hideLabels: false
         };
     },
-
-    _tooltipHtml(d) {
-        const html = this.props.tooltipHtml(this.props.x(d), this.props.y(d));
+    _tooltipHtml: function _tooltipHtml(d) {
+        var html = this.props.tooltipHtml(this.props.x(d), this.props.y(d));
 
         return [html, 0, 0];
     },
+    render: function render() {
+        var _props4 = this.props,
+            data = _props4.data,
+            width = _props4.width,
+            height = _props4.height,
+            margin = _props4.margin,
+            viewBox = _props4.viewBox,
+            preserveAspectRatio = _props4.preserveAspectRatio,
+            colorScale = _props4.colorScale,
+            padRadius = _props4.padRadius,
+            cornerRadius = _props4.cornerRadius,
+            sort = _props4.sort,
+            x = _props4.x,
+            y = _props4.y,
+            values = _props4.values,
+            hideLabels = _props4.hideLabels;
+        var _props5 = this.props,
+            innerRadius = _props5.innerRadius,
+            outerRadius = _props5.outerRadius,
+            labelRadius = _props5.labelRadius;
 
-    render() {
-        const {
-            data,
-            width,
-            height,
-            margin,
-            viewBox,
-            preserveAspectRatio,
-            colorScale,
-            padRadius,
-            cornerRadius,
-            sort,
-            x,
-            y,
-            values,
-            hideLabels
-        } = this.props;
 
-        let { innerRadius, outerRadius, labelRadius } = this.props;
+        var innerWidth = this._innerWidth;
+        var innerHeight = this._innerHeight;
 
-        const innerWidth = this._innerWidth;
-        const innerHeight = this._innerHeight;
-
-        let pie = d3.layout.pie().value(e => y(e));
+        var pie = _d2.default.layout.pie().value(function (e) {
+            return y(e);
+        });
 
         if (typeof sort !== 'undefined') {
             pie = pie.sort(sort);
         }
 
-        const radius = Math.min(innerWidth, innerHeight) / 2;
+        var radius = Math.min(innerWidth, innerHeight) / 2;
         if (!innerRadius) {
             innerRadius = radius * 0.8;
         }
@@ -216,53 +298,43 @@ const PieChart = createReactClass({
             labelRadius = radius * 0.9;
         }
 
-        const arc = d3.svg
-            .arc()
-            .innerRadius(innerRadius)
-            .outerRadius(outerRadius)
-            .padRadius(padRadius)
-            .cornerRadius(cornerRadius);
+        var arc = _d2.default.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius).padRadius(padRadius).cornerRadius(cornerRadius);
 
-        const outerArc = d3.svg
-            .arc()
-            .innerRadius(labelRadius)
-            .outerRadius(labelRadius);
+        var outerArc = _d2.default.svg.arc().innerRadius(labelRadius).outerRadius(labelRadius);
 
-        const pieData = pie(values(data));
+        var pieData = pie(values(data));
 
-        const translation = `translate(${innerWidth / 2}, ${innerHeight / 2})`;
+        var translation = 'translate(' + innerWidth / 2 + ', ' + innerHeight / 2 + ')';
 
-        return (
-            <div>
-                <Chart
-                    height={height}
-                    width={width}
-                    margin={margin}
-                    viewBox={viewBox}
-                    preserveAspectRatio={preserveAspectRatio}
-                >
-                    <g transform={translation}>
-                        <DataSet
-                            width={innerWidth}
-                            height={innerHeight}
-                            colorScale={colorScale}
-                            pie={pieData}
-                            arc={arc}
-                            outerArc={outerArc}
-                            radius={radius}
-                            x={x}
-                            y={y}
-                            onMouseEnter={this.onMouseEnter}
-                            onMouseLeave={this.onMouseLeave}
-                            hideLabels={hideLabels}
-                        />
-                    </g>
-                    {this.props.children}
-                </Chart>
-                <Tooltip {...this.state.tooltip} />
-            </div>
+        return _react2.default.createElement(
+            'div',
+            null,
+            _react2.default.createElement(
+                _Chart2.default,
+                { height: height, width: width, margin: margin, viewBox: viewBox, preserveAspectRatio: preserveAspectRatio },
+                _react2.default.createElement(
+                    'g',
+                    { transform: translation },
+                    _react2.default.createElement(DataSet, {
+                        width: innerWidth,
+                        height: innerHeight,
+                        colorScale: colorScale,
+                        pie: pieData,
+                        arc: arc,
+                        outerArc: outerArc,
+                        radius: radius,
+                        x: x,
+                        y: y,
+                        onMouseEnter: this.onMouseEnter,
+                        onMouseLeave: this.onMouseLeave,
+                        hideLabels: hideLabels
+                    })
+                ),
+                this.props.children
+            ),
+            _react2.default.createElement(_Tooltip2.default, this.state.tooltip)
         );
     }
 });
 
-export default PieChart;
+exports.default = PieChart;
