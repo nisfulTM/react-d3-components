@@ -106,7 +106,7 @@ const DataSet = createReactClass({
                     textAnchor={textAnchor}
                     className="total"
                 >
-                    {y(wedge.data)}
+                    {'£' + y(wedge.data)}
                 </text>
 
                 <text
