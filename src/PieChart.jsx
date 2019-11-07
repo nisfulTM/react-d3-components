@@ -67,7 +67,8 @@ const DataSet = createReactClass({
             stroke,
             fill,
             opacity,
-            x
+            x,
+            y
         } = this.props;
 
         const labelPos = outerArc.centroid(wedge);
@@ -91,30 +92,29 @@ const DataSet = createReactClass({
                         linePos
                     ]}
                 />
-                <circle  
-                cx={ labelPos[0]}
-                cy= {labelPos[1]}               
+                <circle
+                cx={labelPos[0]}
+                cy={labelPos[1]}
                 r={3}
                 strokeWidth={2}
-                fill ={ wedge.data.color}  
-                className= "circle">
-                </circle>
+                fill={wedge.data.color}
+                className="circle" />
                 <text
                     dy=".35em"
                     x={labelPos[0]}
-                    y={labelPos[1]+15}
+                    y={labelPos[1] + 15}
                     textAnchor={textAnchor}
-                    className= "total"
+                    className="total"
                 >
-                    {y(wedge.data)} 
+                    {y(wedge.data)}
                 </text>
-             
+
                 <text
                     dy=".35em"
                     x={labelPos[0]}
-                    y={labelPos[1]+30}
+                    y={labelPos[1] + 30}
                     textAnchor={textAnchor}
-                    className= "title"
+                    className="title"
                 >
                     {x(wedge.data)}
                 </text>
