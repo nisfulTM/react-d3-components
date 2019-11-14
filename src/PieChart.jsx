@@ -106,7 +106,7 @@ const DataSet = createReactClass({
                     textAnchor={textAnchor}
                     className="total"
                 >
-                    {'£' + y(wedge.data)}
+                    {wedge.data.symbol + y(wedge.data).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,')}
                 </text>
 
                 <text
