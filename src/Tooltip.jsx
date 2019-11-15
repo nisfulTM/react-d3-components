@@ -27,7 +27,7 @@ const Tooltip = createReactClass({
         const style = {
             display: hidden ? 'none' : 'block',
             position: 'fixed',
-            top,
+            top:top + 15,
             left,
             transform: `translate(-${translate}%, 0)`,
             pointerEvents: 'none'
