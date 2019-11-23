@@ -135,7 +135,7 @@ const DataSet = createReactClass({
         } = this.props;
 
         const wedges = pie.map((e, index) => {
-            const labelFits = e.endAngle - e.startAngle >= 1 * Math.PI / 180;
+            const labelFits = e.endAngle - e.startAngle >= 0 * Math.PI / 180;
 
             return (
                 <g key={`${x(e.data)}.${y(e.data)}.${index}`} className="arc">
