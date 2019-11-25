@@ -58,7 +58,7 @@ const DataSet = createReactClass({
         };
     },
 
-    renderLabel(wedge) {
+    renderLabel(wedge, previous, index, ycoord) {
         const {
             arc,
             outerArc,
@@ -78,6 +78,14 @@ const DataSet = createReactClass({
         linePos[0] = radius * 0.95 * (this.midAngle(wedge) < Math.PI ? 1 : -1);
 
         const textAnchor = this.midAngle(wedge) < Math.PI ? 'start' : 'end';
+
+        if (index != 0) {
+            linePos[1] = ycoord[index - 1] + 45 * (this.midAngle(wedge) < Math.PI ? 1 : -1);
+            labelPos[1] = linePos[1];
+            ycoord[index] = labelPos[1];
+        } else {
+            ycoord[0] = labelPos[1];
+        }
 
         return (
             <g>
@@ -134,8 +142,14 @@ const DataSet = createReactClass({
             hideLabels
         } = this.props;
 
+        const ycoord = [];
+        let myindex = 0;
         const wedges = pie.map((e, index) => {
             const labelFits = e.endAngle - e.startAngle >= 0 * Math.PI / 180;
+            let previous;
+            if (index > 0) {
+                previous = pie[index - 1];
+            }
 
             return (
                 <g key={`${x(e.data)}.${y(e.data)}.${index}`} className="arc">
@@ -149,7 +163,7 @@ const DataSet = createReactClass({
                     {!hideLabels &&
                         !!e.value &&
                         labelFits &&
-                        this.renderLabel(e)}
+                        this.renderLabel(e, previous, myindex++, ycoord)}
                 </g>
             );
         });
