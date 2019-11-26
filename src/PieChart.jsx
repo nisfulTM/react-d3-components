@@ -58,7 +58,7 @@ const DataSet = createReactClass({
         };
     },
 
-    renderLabel(wedge, previous, index, ycoord) {
+    renderLabel(wedge, previous, index, ycoord, xcoord) {
         const {
             arc,
             outerArc,
@@ -70,21 +70,29 @@ const DataSet = createReactClass({
             x,
             y
         } = this.props;
-
+        const direction = this.midAngle(wedge) < Math.PI ? 1 : -1;
         const labelPos = outerArc.centroid(wedge);
-        labelPos[0] = radius * (this.midAngle(wedge) < Math.PI ? 1 : -1);
+        labelPos[0] = radius * direction;
 
         const linePos = outerArc.centroid(wedge);
-        linePos[0] = radius * 0.95 * (this.midAngle(wedge) < Math.PI ? 1 : -1);
+        linePos[0] = radius * 0.95 * direction;
 
         const textAnchor = this.midAngle(wedge) < Math.PI ? 'start' : 'end';
 
         if (index != 0) {
-            linePos[1] = ycoord[index - 1] + 45 * (this.midAngle(wedge) < Math.PI ? 1 : -1);
+            if (Math.abs(xcoord[index - 1] - labelPos[0]) < 0.1) {
+                const distance = Math.abs(labelPos[1] - ycoord[index - 1]) - 40;
+                if (direction == 1 && (labelPos[1] < ycoord[index - 1] || distance < 0.0) ||
+                    direction == -1 && (labelPos[1] > ycoord[index - 1] || distance < 0.0)) {
+                  linePos[1] = ycoord[index - 1] + 45 * direction;
+                }
+            }
             labelPos[1] = linePos[1];
             ycoord[index] = labelPos[1];
+            xcoord[index] = labelPos[0];
         } else {
             ycoord[0] = labelPos[1];
+            xcoord[0] = labelPos[0];
         }
 
         return (
@@ -143,6 +151,7 @@ const DataSet = createReactClass({
         } = this.props;
 
         const ycoord = [];
+        const xcoord = [];
         let myindex = 0;
         const wedges = pie.map((e, index) => {
             const labelFits = e.endAngle - e.startAngle >= 0 * Math.PI / 180;
@@ -163,7 +172,7 @@ const DataSet = createReactClass({
                     {!hideLabels &&
                         !!e.value &&
                         labelFits &&
-                        this.renderLabel(e, previous, myindex++, ycoord)}
+                        this.renderLabel(e, previous, myindex++, ycoord, xcoord)}
                 </g>
             );
         });
