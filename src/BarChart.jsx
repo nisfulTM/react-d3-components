@@ -44,10 +44,14 @@ const DataSet = createReactClass({
             onMouseEnter,
             onMouseLeave,
             groupedBars,
-            colorByLabel
+            colorByLabel,
+            showBarTotal,
+            barTotalFormat,
+            barTotalOffset
         } = this.props;
 
         let bars;
+        const barTotalLabels = [];
         if (groupedBars) {
             bars = data.map((stack, serieIndex) =>
                 values(stack).map((e, index) => {
@@ -95,9 +99,46 @@ const DataSet = createReactClass({
                     );
                 })
             );
+            // If bar totals need to be displayed
+            if (showBarTotal) {
+                const barTotalData = {};
+                data.forEach(stack =>
+                    values(stack).forEach(e => {
+                        const x = e.x;
+                        if (!barTotalData[x]) {
+                            barTotalData[x] = {
+                                x: xScale(x),
+                                y: 0,
+                                total: 0
+                            };
+                        }
+                        const yVal =
+                            y(e) < 0 ? yScale(y0(e)) : yScale(y0(e) + y(e));
+                        // Set y value (Last value)
+                        barTotalData[x].y = yVal;
+                        // Add total
+                        barTotalData[x].total += e.y;
+                    })
+                );
+                // Iterate over data
+                for (const x in barTotalData) {
+                    barTotalLabels.push(
+                        <text
+                            className="bar-total-label"
+                            x={barTotalData[x].x}
+                            y={barTotalData[x].y}
+                            width={xScale.rangeBand()}
+                            textAnchor="middle"
+                            dy={barTotalOffset && barTotalOffset.top ? String(barTotalOffset.top) : '0'}
+                            dx={barTotalOffset && barTotalOffset.left ? String(Math.round(xScale.rangeBand() / 2) + barTotalOffset.left) : String(Math.round(xScale.rangeBand() / 2))}>
+                            {barTotalFormat(barTotalData[x].total)}
+                        </text>
+                    );
+                }
+            }
         }
 
-        return <g>{bars}</g>;
+        return <g>{bars.concat(barTotalLabels)}</g>;
     }
 });
 
@@ -166,7 +207,10 @@ const BarChart = createReactClass({
             x,
             groupedBars,
             colorByLabel,
-            tickFormat
+            tickFormat,
+            showBarTotal,
+            barTotalFormat,
+            barTotalOffset
         } = this.props;
 
         const data = this._data;
@@ -199,6 +243,9 @@ const BarChart = createReactClass({
                         onMouseLeave={this.onMouseLeave}
                         groupedBars={groupedBars}
                         colorByLabel={colorByLabel}
+                        showBarTotal={showBarTotal}
+                        barTotalFormat={barTotalFormat}
+                        barTotalOffset={barTotalOffset}
                     />
                     <Axis
                         className="x axis"
